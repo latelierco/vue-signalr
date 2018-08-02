@@ -30,7 +30,7 @@ new Vue({
 });
 ```
 
-## Exemple with components
+## Example with component
 
 ```js
 Vue.extend({
