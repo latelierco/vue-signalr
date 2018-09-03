@@ -1,6 +1,6 @@
 {
-  "name": "vue-signalr",
-  "version": "0.0.1",
+  "name": "@latelier/vue-signalr",
+  "version": "1.0.0",
   "description": "",
   "main": "dist/vue-signalr.js",
   "files": [
@@ -27,7 +27,8 @@
   },
   "homepage": "https://github.com/latelierco/vue-signalr#readme",
   "dependencies": {
-    "@aspnet/signalr-client": "^1.0.0-alpha2-final"
+    "@aspnet/signalr": "^1.0.3",
+    "tslib": "^1.9.3"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

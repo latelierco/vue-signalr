@@ -52,9 +52,9 @@ var _inherits2 = require('babel-runtime/helpers/inherits');
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
-var _signalrClient = require('@aspnet/signalr-client');
+var _signalr = require('@aspnet/signalr');
 
-var SignalR = _interopRequireWildcard(_signalrClient);
+var SignalR = _interopRequireWildcard(_signalr);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -63,8 +63,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var EventEmitter = require('events');
 
 var defaultOptions = {
-  log: false,
-  connectionTimeout: false
+  log: false
 };
 
 var SocketConnection = function (_EventEmitter) {
@@ -99,7 +98,7 @@ var SocketConnection = function (_EventEmitter) {
               case 0:
                 _context2.prev = 0;
                 con = connection || this.connection;
-                socket = new SignalR.HubConnection(con);
+                socket = new SignalR.HubConnectionBuilder().withUrl(con).build();
 
 
                 socket.connection.onclose = function () {
@@ -176,14 +175,10 @@ var SocketConnection = function (_EventEmitter) {
               case 0:
                 this.options = (0, _assign2.default)(defaultOptions, options);
 
-                if (this.options.connectionTimeout) {
-                  this.connection = this.connection + '?connectionTimeout=' + this.options.connectionTimeout;
-                }
-
-                _context3.next = 4;
+                _context3.next = 3;
                 return this._initialize();
 
-              case 4:
+              case 3:
               case 'end':
                 return _context3.stop();
             }
@@ -344,39 +339,6 @@ var SocketConnection = function (_EventEmitter) {
 
       return invoke;
     }()
-  }, {
-    key: 'sendKeepAlive',
-    value: function () {
-      var _ref7 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee7() {
-        return _regenerator2.default.wrap(function _callee7$(_context7) {
-          while (1) {
-            switch (_context7.prev = _context7.next) {
-              case 0:
-                if (this.socket) {
-                  _context7.next = 2;
-                  break;
-                }
-
-                return _context7.abrupt('return');
-
-              case 2:
-                _context7.next = 4;
-                return this.socket.invoke('keepAlive');
-
-              case 4:
-              case 'end':
-                return _context7.stop();
-            }
-          }
-        }, _callee7, this);
-      }));
-
-      function sendKeepAlive() {
-        return _ref7.apply(this, arguments);
-      }
-
-      return sendKeepAlive;
-    }()
   }]);
   return SocketConnection;
 }(EventEmitter);
@@ -393,16 +355,6 @@ function install(Vue, connection) {
   var Socket = new SocketConnection(connection);
 
   Vue.socket = Socket;
-
-  var interval = void 0;
-  Socket.listen('authenticated');
-
-  Socket.on('authenticated', function () {
-    if (interval) clearInterval(interval);
-    interval = setInterval(function () {
-      return Socket.sendKeepAlive();
-    }, 3000);
-  });
 
   (0, _defineProperties2.default)(Vue.prototype, {
 

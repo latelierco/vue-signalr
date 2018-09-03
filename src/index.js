@@ -1,10 +1,9 @@
-import * as SignalR from '@aspnet/signalr-client';
+import * as SignalR from '@aspnet/signalr';
 
 const EventEmitter = require('events');
 
 const defaultOptions = {
   log: false,
-  connectionTimeout: false,
 };
 
 class SocketConnection extends EventEmitter {
@@ -23,7 +22,7 @@ class SocketConnection extends EventEmitter {
   async _initialize(connection = '') {
     try {
       const con = connection || this.connection;
-      const socket = new SignalR.HubConnection(con);
+      const socket = new SignalR.HubConnectionBuilder().withUrl(con).build()
 
       socket.connection.onclose = async (error) => {
         if (this.options.log) console.log('reconect');
@@ -49,10 +48,6 @@ class SocketConnection extends EventEmitter {
 
   async start(options = {}) {
     this.options = Object.assign(defaultOptions, options);
-
-    if (this.options.connectionTimeout) {
-      this.connection = `${this.connection}?connectionTimeout=${this.options.connectionTimeout}`;
-    }
 
     await this._initialize();
   }
@@ -104,10 +99,6 @@ class SocketConnection extends EventEmitter {
         resolve(this.socket.invoke(methodName, ...args))));
   }
 
-  async sendKeepAlive() {
-    if (!this.socket) return;
-    await this.socket.invoke('keepAlive');
-  }
 }
 
 if (!SignalR) {
@@ -122,14 +113,6 @@ function install(Vue, connection) {
   const Socket = new SocketConnection(connection);
 
   Vue.socket = Socket;
-
-  let interval;
-  Socket.listen('authenticated');
-
-  Socket.on('authenticated', () => {
-    if (interval) clearInterval(interval);
-    interval = setInterval(() => Socket.sendKeepAlive(), 3000);
-  });
 
   Object.defineProperties(Vue.prototype, {
 
