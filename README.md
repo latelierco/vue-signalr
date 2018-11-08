@@ -5,7 +5,7 @@
 
 
 ```console
-$ npm install vue-signalr --save
+$ npm install @latelier/vue-signalr --save
 ```
 
 ## Get started
