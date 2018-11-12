@@ -19,17 +19,18 @@ class SocketConnection extends EventEmitter {
     this.offline = false;
   }
 
-  async _initialize(connection = '') {
+  async _initialize(connection = '', transportType = SignalR.HttpTransportType.None) {
     try {
       const con = connection || this.connection;
-      const socket = new SignalR.HubConnectionBuilder().withUrl(con).build()
+      const socket = new SignalR.HubConnectionBuilder()
+        .withUrl(con).build(transportType)
 
       socket.connection.onclose = async (error) => {
         if (this.options.log) console.log('reconect');
 
         this.socket = false;
         /* eslint-disable no-underscore-dangle */
-        await this._initialize();
+        await this._initialize(con, SignalR.HttpTransportType.LongPolling);
         this.emit('reconect');
       };
 
@@ -41,7 +42,7 @@ class SocketConnection extends EventEmitter {
       if (this.options.log) console.log('Error reconect');
 
       setTimeout(() => {
-        this._initialize();
+        this._initialize(con, SignalR.HttpTransportType.LongPolling);
       }, 1000);
     }
   }
