@@ -91,14 +91,17 @@ var SocketConnection = function (_EventEmitter) {
         var _this2 = this;
 
         var connection = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-        var con, socket;
+        var transportType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : SignalR.HttpTransportType.None;
+
+        var _con, socket;
+
         return _regenerator2.default.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
                 _context2.prev = 0;
-                con = connection || this.connection;
-                socket = new SignalR.HubConnectionBuilder().withUrl(con).build();
+                _con = connection || this.connection;
+                socket = new SignalR.HubConnectionBuilder().withUrl(_con).build(transportType);
 
 
                 socket.connection.onclose = function () {
@@ -107,15 +110,15 @@ var SocketConnection = function (_EventEmitter) {
                       while (1) {
                         switch (_context.prev = _context.next) {
                           case 0:
-                            if (_this2.options.log) console.log('reconect');
+                            if (_this2.options.log) console.log('Reconnecting...');
 
                             _this2.socket = false;
                             /* eslint-disable no-underscore-dangle */
                             _context.next = 4;
-                            return _this2._initialize();
+                            return _this2._initialize(_con, SignalR.HttpTransportType.LongPolling);
 
                           case 4:
-                            _this2.emit('reconect');
+                            _this2.emit('reconnect');
 
                           case 5:
                           case 'end':
@@ -125,7 +128,7 @@ var SocketConnection = function (_EventEmitter) {
                     }, _callee, _this2);
                   }));
 
-                  return function (_x2) {
+                  return function (_x3) {
                     return _ref2.apply(this, arguments);
                   };
                 }();
@@ -144,10 +147,10 @@ var SocketConnection = function (_EventEmitter) {
                 _context2.prev = 10;
                 _context2.t0 = _context2['catch'](0);
 
-                if (this.options.log) console.log('Error reconect');
+                if (this.options.log) console.log('Error, reconnecting...');
 
                 setTimeout(function () {
-                  _this2._initialize();
+                  _this2._initialize(con, SignalR.HttpTransportType.LongPolling);
                 }, 1000);
 
               case 14:
@@ -215,7 +218,7 @@ var SocketConnection = function (_EventEmitter) {
         }, _callee4, this);
       }));
 
-      function authenticate(_x5) {
+      function authenticate(_x6) {
         return _ref4.apply(this, arguments);
       }
 
@@ -320,7 +323,7 @@ var SocketConnection = function (_EventEmitter) {
                     }, _callee5, _this5);
                   }));
 
-                  return function (_x7) {
+                  return function (_x8) {
                     return _ref6.apply(this, arguments);
                   };
                 }()));
@@ -333,7 +336,7 @@ var SocketConnection = function (_EventEmitter) {
         }, _callee6, this);
       }));
 
-      function invoke(_x6) {
+      function invoke(_x7) {
         return _ref5.apply(this, arguments);
       }
 
@@ -344,12 +347,12 @@ var SocketConnection = function (_EventEmitter) {
 }(EventEmitter);
 
 if (!SignalR) {
-  throw new Error('[Vue-SignalR] cannot locate signalr-client');
+  throw new Error('[Vue-SignalR] Cannot locate signalr-client');
 }
 
 function install(Vue, connection) {
   if (!connection) {
-    throw new Error('[Vue-SignalR] cannot locate connection');
+    throw new Error('[Vue-SignalR] Cannot locate connection');
   }
 
   var Socket = new SocketConnection(connection);
