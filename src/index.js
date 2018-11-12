@@ -26,12 +26,12 @@ class SocketConnection extends EventEmitter {
         .withUrl(con).build(transportType)
 
       socket.connection.onclose = async (error) => {
-        if (this.options.log) console.log('reconect');
+        if (this.options.log) console.log('Reconnecting...');
 
         this.socket = false;
         /* eslint-disable no-underscore-dangle */
         await this._initialize(con, SignalR.HttpTransportType.LongPolling);
-        this.emit('reconect');
+        this.emit('reconnect');
       };
 
       await socket.start();
@@ -39,7 +39,7 @@ class SocketConnection extends EventEmitter {
       this.socket = socket;
       this.emit('init');
     } catch (error) {
-      if (this.options.log) console.log('Error reconect');
+      if (this.options.log) console.log('Error, reconnecting...');
 
       setTimeout(() => {
         this._initialize(con, SignalR.HttpTransportType.LongPolling);
@@ -103,12 +103,12 @@ class SocketConnection extends EventEmitter {
 }
 
 if (!SignalR) {
-  throw new Error('[Vue-SignalR] cannot locate signalr-client');
+  throw new Error('[Vue-SignalR] Cannot locate signalr-client');
 }
 
 function install(Vue, connection) {
   if (!connection) {
-    throw new Error('[Vue-SignalR] cannot locate connection');
+    throw new Error('[Vue-SignalR] Cannot locate connection');
   }
 
   const Socket = new SocketConnection(connection);
