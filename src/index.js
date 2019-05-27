@@ -4,6 +4,7 @@ const EventEmitter = require('events');
 
 const defaultOptions = {
   log: false,
+  msgpack: false
 };
 
 class SocketConnection extends EventEmitter {
@@ -23,7 +24,13 @@ class SocketConnection extends EventEmitter {
     try {
       const con = connection || this.connection;
       const socket = new SignalR.HubConnectionBuilder()
-        .withUrl(con).build(transportType)
+        .withUrl(con)
+
+      if (this.options.msgpack) {
+        socket.withHubProtocol(new signalR.protocols.msgpack.MessagePackHubProtocol())
+      }
+
+      socket.build(transportType)
 
       socket.connection.onclose = async (error) => {
         if (this.options.log) console.log('Reconnecting...');
