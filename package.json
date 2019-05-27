@@ -1,6 +1,6 @@
 {
   "name": "@latelier/vue-signalr",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Signalr client for vue js",
   "main": "dist/vue-signalr.js",
   "files": [
