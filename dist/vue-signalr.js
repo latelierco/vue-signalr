@@ -63,7 +63,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var EventEmitter = require('events');
 
 var defaultOptions = {
-  log: false
+  log: false,
+  msgpack: false
 };
 
 var SocketConnection = function (_EventEmitter) {
@@ -101,8 +102,14 @@ var SocketConnection = function (_EventEmitter) {
               case 0:
                 _context2.prev = 0;
                 _con = connection || this.connection;
-                socket = new SignalR.HubConnectionBuilder().withUrl(_con).build(transportType);
+                socket = new SignalR.HubConnectionBuilder().withUrl(_con);
 
+
+                if (this.options.msgpack) {
+                  socket.withHubProtocol(new signalR.protocols.msgpack.MessagePackHubProtocol());
+                }
+
+                socket.build(transportType);
 
                 socket.connection.onclose = function () {
                   var _ref2 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(error) {
@@ -133,18 +140,18 @@ var SocketConnection = function (_EventEmitter) {
                   };
                 }();
 
-                _context2.next = 6;
+                _context2.next = 8;
                 return socket.start();
 
-              case 6:
+              case 8:
 
                 this.socket = socket;
                 this.emit('init');
-                _context2.next = 14;
+                _context2.next = 16;
                 break;
 
-              case 10:
-                _context2.prev = 10;
+              case 12:
+                _context2.prev = 12;
                 _context2.t0 = _context2['catch'](0);
 
                 if (this.options.log) console.log('Error, reconnecting...');
@@ -153,12 +160,12 @@ var SocketConnection = function (_EventEmitter) {
                   _this2._initialize(con, SignalR.HttpTransportType.LongPolling);
                 }, 1000);
 
-              case 14:
+              case 16:
               case 'end':
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[0, 10]]);
+        }, _callee2, this, [[0, 12]]);
       }));
 
       function _initialize() {
