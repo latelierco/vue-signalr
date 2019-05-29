@@ -311,25 +311,20 @@ var SocketConnection = function (_EventEmitter) {
                 return _context6.abrupt('return', false);
 
               case 3:
-                data = {
-                  Content: _stringify2.default.apply(JSON, (0, _toConsumableArray3.default)(args))
-                };
-
-                if (args.action) {
-                  data = {
-                    Action: args.action,
-                    Parameters: (0, _stringify2.default)(args.action)
-                  };
-                }
+                data = _stringify2.default.apply(JSON, (0, _toConsumableArray3.default)(args));
+                // if (args.action) { data = { 
+                //   Action: args.action,
+                //   Parameters: JSON.stringify(args.action)
+                //  } }
 
                 if (!this.socket) {
-                  _context6.next = 7;
+                  _context6.next = 6;
                   break;
                 }
 
                 return _context6.abrupt('return', this.socket.invoke(methodName, data));
 
-              case 7:
+              case 6:
                 return _context6.abrupt('return', new _promise2.default(function () {
                   var _ref6 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee5(resolve) {
                     return _regenerator2.default.wrap(function _callee5$(_context5) {
@@ -353,7 +348,7 @@ var SocketConnection = function (_EventEmitter) {
                   };
                 }()));
 
-              case 8:
+              case 7:
               case 'end':
                 return _context6.stop();
             }

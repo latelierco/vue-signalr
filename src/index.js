@@ -107,13 +107,11 @@ class SocketConnection extends EventEmitter {
     if (this.options.log) console.log({ type: 'invoke', methodName, args });
     if (this.offline) return false;
 
-    let data = {
-      Content: JSON.stringify(...args)
-    }
-    if (args.action) { data = { 
-      Action: args.action,
-      Parameters: JSON.stringify(args.action)
-     } }
+    let data = JSON.stringify(...args)
+    // if (args.action) { data = { 
+    //   Action: args.action,
+    //   Parameters: JSON.stringify(args.action)
+    //  } }
 
     if (this.socket) {
       return this.socket.invoke(methodName, data);
