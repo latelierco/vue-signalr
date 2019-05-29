@@ -16,10 +16,6 @@ var _promise = require('babel-runtime/core-js/promise');
 
 var _promise2 = _interopRequireDefault(_promise);
 
-var _extends2 = require('babel-runtime/helpers/extends');
-
-var _extends3 = _interopRequireDefault(_extends2);
-
 var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
 
 var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
@@ -320,7 +316,10 @@ var SocketConnection = function (_EventEmitter) {
                 };
 
                 if (args.action) {
-                  data = (0, _extends3.default)({}, args);
+                  data = {
+                    Action: args.action,
+                    Parameters: (0, _stringify2.default)(args.action)
+                  };
                 }
 
                 if (!this.socket) {
