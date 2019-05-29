@@ -90,7 +90,10 @@ class SocketConnection extends EventEmitter {
     let data = {
       Content: JSON.stringify(...args)
     }
-    if (args.action) { data = { ...args } }
+    if (args.action) { data = { 
+      Action: args.action,
+      Parameters: JSON.stringify(args.action)
+     } }
 
     if (this.socket) {
       this.socket.send(methodName, data);

@@ -16,13 +16,13 @@ var _promise = require('babel-runtime/core-js/promise');
 
 var _promise2 = _interopRequireDefault(_promise);
 
-var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
-
-var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
-
 var _extends2 = require('babel-runtime/helpers/extends');
 
 var _extends3 = _interopRequireDefault(_extends2);
+
+var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
+
+var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
 
 var _stringify = require('babel-runtime/core-js/json/stringify');
 
@@ -275,7 +275,10 @@ var SocketConnection = function (_EventEmitter) {
         Content: _stringify2.default.apply(JSON, args)
       };
       if (args.action) {
-        data = (0, _extends3.default)({}, args);
+        data = {
+          Action: args.action,
+          Parameters: (0, _stringify2.default)(args.action)
+        };
       }
 
       if (this.socket) {
