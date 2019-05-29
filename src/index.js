@@ -87,25 +87,35 @@ class SocketConnection extends EventEmitter {
     if (this.options.log) console.log({ type: 'send', methodName, args });
     if (this.offline) return;
 
+    let data = {
+      Content: JSON.stringify(...args)
+    }
+    if (args.action) { data = { ...args } }
+
     if (this.socket) {
-      this.socket.send(methodName, ...args);
+      this.socket.send(methodName, data);
       return;
     }
 
-    this.once('init', () => this.socket.send(methodName, ...args));
+    this.once('init', () => this.socket.send(methodName, data));
   }
 
   async invoke(methodName, ...args) {
     if (this.options.log) console.log({ type: 'invoke', methodName, args });
     if (this.offline) return false;
 
+    let data = {
+      Content: JSON.stringify(...args)
+    }
+    if (args.action) { data = { ...args } }
+
     if (this.socket) {
-      return this.socket.invoke(methodName, ...args);
+      return this.socket.invoke(methodName, data);
     }
 
     return new Promise(async resolve =>
       this.once('init', () =>
-        resolve(this.socket.invoke(methodName, ...args))));
+        resolve(this.socket.invoke(methodName, data))));
   }
 
 }

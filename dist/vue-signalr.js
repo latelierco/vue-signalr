@@ -20,6 +20,14 @@ var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
 
 var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
 
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
 var _assign = require('babel-runtime/core-js/object/assign');
 
 var _assign2 = _interopRequireDefault(_assign);
@@ -263,17 +271,20 @@ var SocketConnection = function (_EventEmitter) {
       if (this.options.log) console.log({ type: 'send', methodName: methodName, args: args });
       if (this.offline) return;
 
-      if (this.socket) {
-        var _socket;
+      var data = {
+        Content: _stringify2.default.apply(JSON, args)
+      };
+      if (args.action) {
+        data = (0, _extends3.default)({}, args);
+      }
 
-        (_socket = this.socket).send.apply(_socket, [methodName].concat(args));
+      if (this.socket) {
+        this.socket.send(methodName, data);
         return;
       }
 
       this.once('init', function () {
-        var _socket2;
-
-        return (_socket2 = _this4.socket).send.apply(_socket2, [methodName].concat(args));
+        return _this4.socket.send(methodName, data);
       });
     }
   }, {
@@ -286,8 +297,7 @@ var SocketConnection = function (_EventEmitter) {
           args[_key2 - 1] = arguments[_key2];
         }
 
-        var _socket3;
-
+        var data;
         return _regenerator2.default.wrap(function _callee6$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
@@ -302,14 +312,22 @@ var SocketConnection = function (_EventEmitter) {
                 return _context6.abrupt('return', false);
 
               case 3:
+                data = {
+                  Content: _stringify2.default.apply(JSON, (0, _toConsumableArray3.default)(args))
+                };
+
+                if (args.action) {
+                  data = (0, _extends3.default)({}, args);
+                }
+
                 if (!this.socket) {
-                  _context6.next = 5;
+                  _context6.next = 7;
                   break;
                 }
 
-                return _context6.abrupt('return', (_socket3 = this.socket).invoke.apply(_socket3, [methodName].concat((0, _toConsumableArray3.default)(args))));
+                return _context6.abrupt('return', this.socket.invoke(methodName, data));
 
-              case 5:
+              case 7:
                 return _context6.abrupt('return', new _promise2.default(function () {
                   var _ref6 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee5(resolve) {
                     return _regenerator2.default.wrap(function _callee5$(_context5) {
@@ -317,9 +335,7 @@ var SocketConnection = function (_EventEmitter) {
                         switch (_context5.prev = _context5.next) {
                           case 0:
                             return _context5.abrupt('return', _this5.once('init', function () {
-                              var _socket4;
-
-                              return resolve((_socket4 = _this5.socket).invoke.apply(_socket4, [methodName].concat((0, _toConsumableArray3.default)(args))));
+                              return resolve(_this5.socket.invoke(methodName, data));
                             }));
 
                           case 1:
@@ -335,7 +351,7 @@ var SocketConnection = function (_EventEmitter) {
                   };
                 }()));
 
-              case 6:
+              case 8:
               case 'end':
                 return _context6.stop();
             }
