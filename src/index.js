@@ -1,5 +1,4 @@
 import * as SignalR from '@aspnet/signalr';
-const signalRMsgPack = require("@aspnet/signalr-protocol-msgpack");
 
 const EventEmitter = require('events');
 
@@ -22,16 +21,16 @@ class SocketConnection extends EventEmitter {
   }
 
   async _initialize(connection = '', transportType = SignalR.HttpTransportType.None) {
-    const con = connection || this.connection;
     try {
-      let socket = new SignalR.HubConnectionBuilder()
+      const con = connection || this.connection;
+      const socket = new SignalR.HubConnectionBuilder()
         .withUrl(con)
 
       if (this.options.msgpack) {
-        socket = socket.withHubProtocol(new signalRMsgPack.MessagePackHubProtocol())
+        socket.withHubProtocol(new signalR.protocols.msgpack.MessagePackHubProtocol())
       }
 
-      socket = socket.build(transportType)
+      socket.build(transportType)
 
       socket.connection.onclose = async (error) => {
         if (this.options.log) console.log('Reconnecting...');
@@ -87,39 +86,25 @@ class SocketConnection extends EventEmitter {
     if (this.options.log) console.log({ type: 'send', methodName, args });
     if (this.offline) return;
 
-    let data = {
-      Content: JSON.stringify(...args)
-    }
-    if (args.action) { data = { 
-      Action: args.action,
-      Parameters: JSON.stringify(args.action)
-     } }
-
     if (this.socket) {
-      this.socket.send(methodName, data);
+      this.socket.send(methodName, ...args);
       return;
     }
 
-    this.once('init', () => this.socket.send(methodName, data));
+    this.once('init', () => this.socket.send(methodName, ...args));
   }
 
   async invoke(methodName, ...args) {
     if (this.options.log) console.log({ type: 'invoke', methodName, args });
     if (this.offline) return false;
 
-    let data = JSON.stringify(...args)
-    // if (args.action) { data = { 
-    //   Action: args.action,
-    //   Parameters: JSON.stringify(args.action)
-    //  } }
-
     if (this.socket) {
-      return this.socket.invoke(methodName, data);
+      return this.socket.invoke(methodName, ...args);
     }
 
     return new Promise(async resolve =>
       this.once('init', () =>
-        resolve(this.socket.invoke(methodName, data))));
+        resolve(this.socket.invoke(methodName, ...args))));
   }
 
 }

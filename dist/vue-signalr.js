@@ -20,10 +20,6 @@ var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
 
 var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
 
-var _stringify = require('babel-runtime/core-js/json/stringify');
-
-var _stringify2 = _interopRequireDefault(_stringify);
-
 var _assign = require('babel-runtime/core-js/object/assign');
 
 var _assign2 = _interopRequireDefault(_assign);
@@ -64,8 +60,6 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var signalRMsgPack = require("@aspnet/signalr-protocol-msgpack");
-
 var EventEmitter = require('events');
 
 var defaultOptions = {
@@ -99,21 +93,23 @@ var SocketConnection = function (_EventEmitter) {
 
         var connection = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
         var transportType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : SignalR.HttpTransportType.None;
-        var con, socket;
+
+        var _con, socket;
+
         return _regenerator2.default.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                con = connection || this.connection;
-                _context2.prev = 1;
-                socket = new SignalR.HubConnectionBuilder().withUrl(con);
+                _context2.prev = 0;
+                _con = connection || this.connection;
+                socket = new SignalR.HubConnectionBuilder().withUrl(_con);
 
 
                 if (this.options.msgpack) {
-                  socket = socket.withHubProtocol(new signalRMsgPack.MessagePackHubProtocol());
+                  socket.withHubProtocol(new signalR.protocols.msgpack.MessagePackHubProtocol());
                 }
 
-                socket = socket.build(transportType);
+                socket.build(transportType);
 
                 socket.connection.onclose = function () {
                   var _ref2 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(error) {
@@ -126,7 +122,7 @@ var SocketConnection = function (_EventEmitter) {
                             _this2.socket = false;
                             /* eslint-disable no-underscore-dangle */
                             _context.next = 4;
-                            return _this2._initialize(con, SignalR.HttpTransportType.LongPolling);
+                            return _this2._initialize(_con, SignalR.HttpTransportType.LongPolling);
 
                           case 4:
                             _this2.emit('reconnect');
@@ -156,7 +152,7 @@ var SocketConnection = function (_EventEmitter) {
 
               case 12:
                 _context2.prev = 12;
-                _context2.t0 = _context2['catch'](1);
+                _context2.t0 = _context2['catch'](0);
 
                 if (this.options.log) console.log('Error, reconnecting...');
 
@@ -169,7 +165,7 @@ var SocketConnection = function (_EventEmitter) {
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[1, 12]]);
+        }, _callee2, this, [[0, 12]]);
       }));
 
       function _initialize() {
@@ -267,23 +263,17 @@ var SocketConnection = function (_EventEmitter) {
       if (this.options.log) console.log({ type: 'send', methodName: methodName, args: args });
       if (this.offline) return;
 
-      var data = {
-        Content: _stringify2.default.apply(JSON, args)
-      };
-      if (args.action) {
-        data = {
-          Action: args.action,
-          Parameters: (0, _stringify2.default)(args.action)
-        };
-      }
-
       if (this.socket) {
-        this.socket.send(methodName, data);
+        var _socket;
+
+        (_socket = this.socket).send.apply(_socket, [methodName].concat(args));
         return;
       }
 
       this.once('init', function () {
-        return _this4.socket.send(methodName, data);
+        var _socket2;
+
+        return (_socket2 = _this4.socket).send.apply(_socket2, [methodName].concat(args));
       });
     }
   }, {
@@ -296,7 +286,8 @@ var SocketConnection = function (_EventEmitter) {
           args[_key2 - 1] = arguments[_key2];
         }
 
-        var data;
+        var _socket3;
+
         return _regenerator2.default.wrap(function _callee6$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
@@ -311,20 +302,14 @@ var SocketConnection = function (_EventEmitter) {
                 return _context6.abrupt('return', false);
 
               case 3:
-                data = _stringify2.default.apply(JSON, (0, _toConsumableArray3.default)(args));
-                // if (args.action) { data = { 
-                //   Action: args.action,
-                //   Parameters: JSON.stringify(args.action)
-                //  } }
-
                 if (!this.socket) {
-                  _context6.next = 6;
+                  _context6.next = 5;
                   break;
                 }
 
-                return _context6.abrupt('return', this.socket.invoke(methodName, data));
+                return _context6.abrupt('return', (_socket3 = this.socket).invoke.apply(_socket3, [methodName].concat((0, _toConsumableArray3.default)(args))));
 
-              case 6:
+              case 5:
                 return _context6.abrupt('return', new _promise2.default(function () {
                   var _ref6 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee5(resolve) {
                     return _regenerator2.default.wrap(function _callee5$(_context5) {
@@ -332,7 +317,9 @@ var SocketConnection = function (_EventEmitter) {
                         switch (_context5.prev = _context5.next) {
                           case 0:
                             return _context5.abrupt('return', _this5.once('init', function () {
-                              return resolve(_this5.socket.invoke(methodName, data));
+                              var _socket4;
+
+                              return resolve((_socket4 = _this5.socket).invoke.apply(_socket4, [methodName].concat((0, _toConsumableArray3.default)(args))));
                             }));
 
                           case 1:
@@ -348,7 +335,7 @@ var SocketConnection = function (_EventEmitter) {
                   };
                 }()));
 
-              case 7:
+              case 6:
               case 'end':
                 return _context6.stop();
             }
