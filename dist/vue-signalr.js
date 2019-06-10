@@ -63,8 +63,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var EventEmitter = require('events');
 
 var defaultOptions = {
-  log: false,
-  msgpack: false
+  log: false
 };
 
 var SocketConnection = function (_EventEmitter) {
@@ -93,24 +92,17 @@ var SocketConnection = function (_EventEmitter) {
 
         var connection = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
         var transportType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : SignalR.HttpTransportType.None;
-
-        var _con, socket;
-
+        var con, socket;
         return _regenerator2.default.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.prev = 0;
-                _con = connection || this.connection;
-                socket = new SignalR.HubConnectionBuilder().withUrl(_con);
+                con = connection || this.connection;
+                _context2.prev = 1;
+                socket = new SignalR.HubConnectionBuilder().withUrl(con);
 
-
-                if (this.options.msgpack) {
-                  socket.withHubProtocol(new signalR.protocols.msgpack.MessagePackHubProtocol());
-                }
 
                 socket.build(transportType);
-
                 socket.connection.onclose = function () {
                   var _ref2 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(error) {
                     return _regenerator2.default.wrap(function _callee$(_context) {
@@ -122,7 +114,7 @@ var SocketConnection = function (_EventEmitter) {
                             _this2.socket = false;
                             /* eslint-disable no-underscore-dangle */
                             _context.next = 4;
-                            return _this2._initialize(_con, SignalR.HttpTransportType.LongPolling);
+                            return _this2._initialize(con, SignalR.HttpTransportType.LongPolling);
 
                           case 4:
                             _this2.emit('reconnect');
@@ -140,19 +132,19 @@ var SocketConnection = function (_EventEmitter) {
                   };
                 }();
 
-                _context2.next = 8;
+                _context2.next = 7;
                 return socket.start();
 
-              case 8:
+              case 7:
 
                 this.socket = socket;
                 this.emit('init');
-                _context2.next = 16;
+                _context2.next = 15;
                 break;
 
-              case 12:
-                _context2.prev = 12;
-                _context2.t0 = _context2['catch'](0);
+              case 11:
+                _context2.prev = 11;
+                _context2.t0 = _context2['catch'](1);
 
                 if (this.options.log) console.log('Error, reconnecting...');
 
@@ -160,12 +152,12 @@ var SocketConnection = function (_EventEmitter) {
                   _this2._initialize(con, SignalR.HttpTransportType.LongPolling);
                 }, 1000);
 
-              case 16:
+              case 15:
               case 'end':
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[0, 12]]);
+        }, _callee2, this, [[1, 11]]);
       }));
 
       function _initialize() {
