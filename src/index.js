@@ -20,13 +20,13 @@ class SocketConnection extends EventEmitter {
   }
 
   async _initialize(connection = '', transportType = SignalR.HttpTransportType.None) {
-      const con = connection || this.connection;
+    const con = connection || this.connection;
 
     try {
       const socket = new SignalR.HubConnectionBuilder()
         .withUrl(con)
-
-      socket.build(transportType)
+        .build(transportType)
+        
       socket.connection.onclose = async (error) => {
         if (this.options.log) console.log('Reconnecting...');
 
