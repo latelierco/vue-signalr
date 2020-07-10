@@ -98,7 +98,7 @@ var SocketConnection = function (_EventEmitter) {
               case 0:
                 con = connection || this.connection;
                 _context2.prev = 1;
-                socket = new SignalR.HubConnectionBuilder().withUrl(con).withAutomaticReconnect().build(transportType);
+                socket = new SignalR.HubConnectionBuilder().withUrl(con).withAutomaticReconnect().build();
 
 
                 socket.connection.onclose = function () {
