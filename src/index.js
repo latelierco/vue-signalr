@@ -1,4 +1,4 @@
-import * as SignalR from '@aspnet/signalr';
+import * as SignalR from '@microsoft/signalr';
 
 const EventEmitter = require('events');
 
@@ -19,20 +19,21 @@ class SocketConnection extends EventEmitter {
     this.offline = false;
   }
 
-  async _initialize(connection = '', transportType = SignalR.HttpTransportType.None) {
+  async _initialize(connection = '') {
     const con = connection || this.connection;
 
     try {
       const socket = new SignalR.HubConnectionBuilder()
         .withUrl(con)
-        .build(transportType)
+        .withAutomaticReconnect()
+        .build()
         
       socket.connection.onclose = async (error) => {
         if (this.options.log) console.log('Reconnecting...');
 
         this.socket = false;
         /* eslint-disable no-underscore-dangle */
-        await this._initialize(con, SignalR.HttpTransportType.LongPolling);
+        await this._initialize(con);
         this.emit('reconnect');
       };
 
@@ -44,7 +45,7 @@ class SocketConnection extends EventEmitter {
       if (this.options.log) console.log('Error, reconnecting...');
 
       setTimeout(() => {
-        this._initialize(con, SignalR.HttpTransportType.LongPolling);
+        this._initialize(con);
       }, 1000);
     }
   }
@@ -69,7 +70,7 @@ class SocketConnection extends EventEmitter {
     this.listened.push(method);
 
     this.on('init', () => {
-      this.socket.on(method, (data) => {
+      this.socsket.on(method, (data) => {
         if (this.options.log) console.log({ type: 'receive', method, data });
 
         this.emit(method, data);

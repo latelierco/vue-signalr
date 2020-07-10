@@ -1,6 +1,6 @@
 {
   "name": "@latelier/vue-signalr",
-  "version": "1.1.9",
+  "version": "2.0.2",
   "description": "Signalr client for vue js",
   "main": "dist/vue-signalr.js",
   "files": [
@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel src/index.js --out-file dist/vue-signalr.js"
+    "build": "babel src/index.js --out-file dist/vue-signalr.js",
+    "run": "node dist/vue-signalr.js"
   },
   "repository": {
     "type": "git",
@@ -27,12 +28,11 @@
   },
   "homepage": "https://github.com/latelierco/vue-signalr#readme",
   "dependencies": {
-    "@aspnet/signalr": "^1.0.3",
-    "@aspnet/signalr-protocol-msgpack": "^1.1.0",
-    "tslib": "^1.9.3"
+    "@microsoft/signalr": "^3.1.5",
+    "tslib": "^2.0.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
+    "babel-cli": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1"
