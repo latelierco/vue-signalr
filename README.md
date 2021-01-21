@@ -13,7 +13,7 @@ $ npm install @latelier/vue-signalr --save
 
 ```js
 import Vue from 'vue'
-import VueSignalR from 'vue-signalr'
+import VueSignalR from '@latelier/vue-signalr'
 
 Vue.use(VueSignalR, 'SOCKET_URL');
 
