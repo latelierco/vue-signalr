@@ -43,6 +43,7 @@ class SocketConnection extends EventEmitter {
       await socket.start();
 
       this.socket = socket;
+      this._isMounted = true;
       this.emit('init');
     } catch (error) {
       if (this.options.log) console.log('Error, reconnecting...');
