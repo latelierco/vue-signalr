@@ -17,6 +17,7 @@ class SocketConnection extends EventEmitter {
     this.toSend = [];
 
     this.offline = false;
+    this._isMounted = false;
   }
 
   async _initialize(connection = '') {
@@ -29,12 +30,14 @@ class SocketConnection extends EventEmitter {
         .build()
         
       socket.connection.onclose = async (error) => {
-        if (this.options.log) console.log('Reconnecting...');
+        if (this._isMounted) {
+          if (this.options.log) console.log('Reconnecting...');
 
-        this.socket = false;
-        /* eslint-disable no-underscore-dangle */
-        await this._initialize(con);
-        this.emit('reconnect');
+          this.socket = false;
+          /* eslint-disable no-underscore-dangle */
+          await this._initialize(con);
+          this.emit('reconnect');
+        }
       };
 
       await socket.start();
@@ -54,6 +57,12 @@ class SocketConnection extends EventEmitter {
     this.options = Object.assign(defaultOptions, options);
 
     await this._initialize();
+  }
+
+  async stop() {
+    this._isMounted = false;
+
+    await this.socket.stop();
   }
 
   async authenticate(accessToken, options = {}) {
