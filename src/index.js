@@ -80,7 +80,7 @@ class SocketConnection extends EventEmitter {
     this.listened.push(method);
 
     this.on('init', () => {
-      this.socsket.on(method, (data) => {
+      this.socket.on(method, (data) => {
         if (this.options.log) console.log({ type: 'receive', method, data });
 
         this.emit(method, data);
