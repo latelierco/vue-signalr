@@ -124,17 +124,25 @@ function install(Vue, connection) {
     throw new Error('[Vue-SignalR] Cannot locate connection');
   }
 
-  const Socket = new SocketConnection(connection);
+  const Socket = new SocketConnection(connection)
+  const VueVersion = app.version.split('.')[0]
 
-  Vue.socket = Socket;
+  if (VueVersion >= 3)
+    app.config.globalProperties.$socket = Socket
 
-  Object.defineProperties(Vue.prototype, {
+  else {
+    Vue.socket = Socket
 
-    $socket: {
-      get() {
-        return Socket;
+    Object.defineProperties(Vue.prototype, {
+
+      $socket: {
+        get() {
+          return Socket
+        },
       },
-    },
+
+    })
+  }
 
   });
 
