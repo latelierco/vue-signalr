@@ -81,6 +81,7 @@ var SocketConnection = function (_EventEmitter) {
     _this.toSend = [];
 
     _this.offline = false;
+    _this._isMounted = false;
     return _this;
   }
 
@@ -107,17 +108,22 @@ var SocketConnection = function (_EventEmitter) {
                       while (1) {
                         switch (_context.prev = _context.next) {
                           case 0:
+                            if (!_this2._isMounted) {
+                              _context.next = 6;
+                              break;
+                            }
+
                             if (_this2.options.log) console.log('Reconnecting...');
 
                             _this2.socket = false;
                             /* eslint-disable no-underscore-dangle */
-                            _context.next = 4;
+                            _context.next = 5;
                             return _this2._initialize(con);
 
-                          case 4:
+                          case 5:
                             _this2.emit('reconnect');
 
-                          case 5:
+                          case 6:
                           case 'end':
                             return _context.stop();
                         }
@@ -136,12 +142,13 @@ var SocketConnection = function (_EventEmitter) {
               case 6:
 
                 this.socket = socket;
+                this._isMounted = true;
                 this.emit('init');
-                _context2.next = 14;
+                _context2.next = 15;
                 break;
 
-              case 10:
-                _context2.prev = 10;
+              case 11:
+                _context2.prev = 11;
                 _context2.t0 = _context2['catch'](1);
 
                 if (this.options.log) console.log('Error, reconnecting...');
@@ -150,12 +157,12 @@ var SocketConnection = function (_EventEmitter) {
                   _this2._initialize(con);
                 }, 1000);
 
-              case 14:
+              case 15:
               case 'end':
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[1, 10]]);
+        }, _callee2, this, [[1, 11]]);
       }));
 
       function _initialize() {
@@ -193,19 +200,17 @@ var SocketConnection = function (_EventEmitter) {
       return start;
     }()
   }, {
-    key: 'authenticate',
+    key: 'stop',
     value: function () {
-      var _ref4 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee4(accessToken) {
-        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var _ref4 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee4() {
         return _regenerator2.default.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                this.connection = this.connection + '?authorization=' + accessToken;
+                this._isMounted = false;
 
-                /* eslint-disable no-underscore-dangle */
                 _context4.next = 3;
-                return this.start(options);
+                return this.socket.stop();
 
               case 3:
               case 'end':
@@ -215,8 +220,37 @@ var SocketConnection = function (_EventEmitter) {
         }, _callee4, this);
       }));
 
-      function authenticate(_x5) {
+      function stop() {
         return _ref4.apply(this, arguments);
+      }
+
+      return stop;
+    }()
+  }, {
+    key: 'authenticate',
+    value: function () {
+      var _ref5 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee5(accessToken) {
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        return _regenerator2.default.wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                this.connection = this.connection + '?authorization=' + accessToken;
+
+                /* eslint-disable no-underscore-dangle */
+                _context5.next = 3;
+                return this.start(options);
+
+              case 3:
+              case 'end':
+                return _context5.stop();
+            }
+          }
+        }, _callee5, this);
+      }));
+
+      function authenticate(_x5) {
+        return _ref5.apply(this, arguments);
       }
 
       return authenticate;
@@ -234,7 +268,7 @@ var SocketConnection = function (_EventEmitter) {
       this.listened.push(method);
 
       this.on('init', function () {
-        _this3.socsket.on(method, function (data) {
+        _this3.socket.on(method, function (data) {
           if (_this3.options.log) console.log({ type: 'receive', method: method, data: data });
 
           _this3.emit(method, data);
@@ -269,7 +303,7 @@ var SocketConnection = function (_EventEmitter) {
   }, {
     key: 'invoke',
     value: function () {
-      var _ref5 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee6(methodName) {
+      var _ref6 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee7(methodName) {
         var _this5 = this;
 
         for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
@@ -278,35 +312,35 @@ var SocketConnection = function (_EventEmitter) {
 
         var _socket3;
 
-        return _regenerator2.default.wrap(function _callee6$(_context6) {
+        return _regenerator2.default.wrap(function _callee7$(_context7) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context7.prev = _context7.next) {
               case 0:
                 if (this.options.log) console.log({ type: 'invoke', methodName: methodName, args: args });
 
                 if (!this.offline) {
-                  _context6.next = 3;
+                  _context7.next = 3;
                   break;
                 }
 
-                return _context6.abrupt('return', false);
+                return _context7.abrupt('return', false);
 
               case 3:
                 if (!this.socket) {
-                  _context6.next = 5;
+                  _context7.next = 5;
                   break;
                 }
 
-                return _context6.abrupt('return', (_socket3 = this.socket).invoke.apply(_socket3, [methodName].concat((0, _toConsumableArray3.default)(args))));
+                return _context7.abrupt('return', (_socket3 = this.socket).invoke.apply(_socket3, [methodName].concat((0, _toConsumableArray3.default)(args))));
 
               case 5:
-                return _context6.abrupt('return', new _promise2.default(function () {
-                  var _ref6 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee5(resolve) {
-                    return _regenerator2.default.wrap(function _callee5$(_context5) {
+                return _context7.abrupt('return', new _promise2.default(function () {
+                  var _ref7 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee6(resolve) {
+                    return _regenerator2.default.wrap(function _callee6$(_context6) {
                       while (1) {
-                        switch (_context5.prev = _context5.next) {
+                        switch (_context6.prev = _context6.next) {
                           case 0:
-                            return _context5.abrupt('return', _this5.once('init', function () {
+                            return _context6.abrupt('return', _this5.once('init', function () {
                               var _socket4;
 
                               return resolve((_socket4 = _this5.socket).invoke.apply(_socket4, [methodName].concat((0, _toConsumableArray3.default)(args))));
@@ -314,27 +348,27 @@ var SocketConnection = function (_EventEmitter) {
 
                           case 1:
                           case 'end':
-                            return _context5.stop();
+                            return _context6.stop();
                         }
                       }
-                    }, _callee5, _this5);
+                    }, _callee6, _this5);
                   }));
 
                   return function (_x7) {
-                    return _ref6.apply(this, arguments);
+                    return _ref7.apply(this, arguments);
                   };
                 }()));
 
               case 6:
               case 'end':
-                return _context6.stop();
+                return _context7.stop();
             }
           }
-        }, _callee6, this);
+        }, _callee7, this);
       }));
 
       function invoke(_x6) {
-        return _ref5.apply(this, arguments);
+        return _ref6.apply(this, arguments);
       }
 
       return invoke;
@@ -353,18 +387,21 @@ function install(Vue, connection) {
   }
 
   var Socket = new SocketConnection(connection);
+  var VueVersion = Vue.version.split('.')[0];
 
-  Vue.socket = Socket;
+  if (VueVersion >= 3) Vue.config.globalProperties.$socket = Socket;else {
+    Vue.socket = Socket;
 
-  (0, _defineProperties2.default)(Vue.prototype, {
+    (0, _defineProperties2.default)(Vue.prototype, {
 
-    $socket: {
-      get: function get() {
-        return Socket;
+      $socket: {
+        get: function get() {
+          return Socket;
+        }
       }
-    }
 
-  });
+    });
+  }
 
   Vue.mixin({
     created: function created() {
