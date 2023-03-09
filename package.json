@@ -1,6 +1,6 @@
 {
   "name": "@latelier/vue-signalr",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Signalr client for vue js",
   "main": "dist/vue-signalr.js",
   "files": [
@@ -28,8 +28,13 @@
   },
   "homepage": "https://github.com/latelierco/vue-signalr#readme",
   "dependencies": {
-    "@microsoft/signalr": "^3.1.5",
-    "tslib": "^2.0.0"
+    "@microsoft/signalr": "^3.1.31",
+    "tslib": "^2.5.0"
+  },
+  "overrides": {
+    "url-parse": "^1.5.9",
+    "qs": "^6.10.3",
+    "json-schema": "^0.4.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
