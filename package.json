@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/latelierco/vue-signalr#readme",
   "dependencies": {
-    "@microsoft/signalr": "^3.1.5",
+    "@microsoft/signalr": "^7.0.7",
     "tslib": "^2.0.0"
   },
   "devDependencies": {
